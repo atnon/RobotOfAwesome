@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">TheInterface</string>
+    <string name="action_settings">Settings</string>
+    <string name ="TextView1Text">The x-coordinate:</string>
+    <string name ="TextView2Text">The y-coordinate:</string>
+
+</resources>
