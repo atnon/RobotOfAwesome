@@ -25,7 +25,7 @@
         android:text="@string/TextView2Text"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 
-    <TextView
+   <TextView
         android:id="@+id/xView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -42,5 +42,49 @@
         android:layout_below="@+id/xView"
         android:text="0"
         android:textAppearance="?android:attr/textAppearanceMedium" />
+    
+     <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/textView2"
+        android:layout_below="@+id/textView2"
+        android:text="@string/TextView3Text"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+      <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/textView3"
+        android:layout_below="@+id/textView3"
+        android:text="@string/TextView4Text"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+       <TextView
+        android:id="@+id/rView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/textView3"
+        android:layout_alignBottom="@+id/textView3"
+        android:layout_marginLeft="40dp"
+        android:layout_toRightOf="@+id/textView3"
+        android:text="0"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+       <TextView
+        android:id="@+id/angView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/textView4"
+        android:layout_alignBottom="@+id/textView4"
+        android:layout_alignLeft="@+id/rView"
+        android:text="0"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+	<ImageView
+        android:id="@+id/imageView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:src="@drawable/cirkeln" />
+       
 
 </RelativeLayout>
