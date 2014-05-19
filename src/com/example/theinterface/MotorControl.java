@@ -10,11 +10,11 @@ import android.util.Log;
 
 public class MotorControl {
 	
-	//private Communications uartCom;
+	private Sendstring uartCom;
 	private static final String TAG = "MotorControl";
 	
-	public MotorControl(/*Communications uartCom*/) {
-		/*this.uartCom = uartCom;*/
+	public MotorControl(Sendstring uartCom) {
+		this.uartCom = uartCom;
 	}
 
 	/**
@@ -57,7 +57,8 @@ public class MotorControl {
 	private void setSpeedLeft(double speed) {
 		int motorSpeed = (int) Math.floor(127*speed + 0.5); /* Round to closest int. */
 		String preparedString = String.format("set m2speed %d\n", motorSpeed);
-		//this.uartCom.sendString(preparedString);
+		byte[] byteString = preparedString.getBytes();
+		this.uartCom.SendData(byteString.length, byteString);
 		Log.i(TAG, "Speed Left Command: " + preparedString);
 	}
 	
@@ -68,7 +69,8 @@ public class MotorControl {
 	private void setSpeedRight(double speed) {
 		int motorSpeed = (int) Math.floor(127*speed + 0.5); /* Round to closest int. */
 		String preparedString = String.format("set m1speed %d\n", motorSpeed);
-		//this.uartCom.sendString(preparedString);
+		byte[] byteString = preparedString.getBytes();
+		this.uartCom.SendData((int)byteString.length, byteString);
 		Log.i(TAG, "Speed Right Command: " + preparedString);
 	}
 	

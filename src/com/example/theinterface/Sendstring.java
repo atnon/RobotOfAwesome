@@ -24,7 +24,7 @@ import android.widget.Toast;
 public class Sendstring extends Activity
 {
 
-	private static final String ACTION_USB_PERMISSION =    "com.UARTTest.USB_PERMISSION";	
+	private static final String ACTION_USB_PERMISSION =    "com.example.theinterface.USB_PERMISSION";	
 	public UsbManager usbmanager;
 	public UsbAccessory usbaccessory;
 	public PendingIntent mPermissionIntent;

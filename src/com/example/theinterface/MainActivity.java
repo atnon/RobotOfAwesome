@@ -50,19 +50,24 @@ public class MainActivity extends ActionBarActivity {
     }
 
     public static class PlaceholderFragment extends Fragment {
-        
+    	public Sendstring uartInterface;
+    	public MotorControl control;
+    	
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+            
+            this.uartInterface = new Sendstring(getActivity(), null);
+            this.uartInterface.ResumeAccessory();
+            this.uartInterface.SetConfig(57600, (byte)8, (byte)1, (byte)0, (byte)0);
+            this.control = new MotorControl(uartInterface);
             
             /* Find the ImageView containing the circle. */
         	ImageView circleView = (ImageView) rootView.findViewById(R.id.imageView1);
 
         	/* Create an OnToch listener with its associated onTouch method. */
         	circleView.setOnTouchListener(new OnTouchListener() {
-        		
-        		private MotorControl control = new MotorControl();
         		
         		@Override
         		public boolean onTouch(View v, MotionEvent event) {
@@ -123,6 +128,11 @@ public class MainActivity extends ActionBarActivity {
         	});
             
             return rootView;
+        }
+        
+        @Override
+        public void onDestroyView() {
+        	this.uartInterface.DestroyAccessory(true);
         }
     }
 
