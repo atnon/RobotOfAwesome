@@ -10,11 +10,11 @@ import android.util.Log;
 
 public class MotorControl {
 	
-	private Communications uartCom;
+	//private Communications uartCom;
 	private static final String TAG = "MotorControl";
 	
-	public MotorControl(Communications uartCom) {
-		this.uartCom = uartCom;
+	public MotorControl(/*Communications uartCom*/) {
+		/*this.uartCom = uartCom;*/
 	}
 
 	/**
@@ -34,12 +34,16 @@ public class MotorControl {
 		
 		/* Calculate the velocity and difference in speed between motors. 
 		 * Velocity may be negative. */
-		double velocity = (Math.sin(angle) < 0) ? -speed : speed;
+		double velocity = Math.sin(angle)*speed;
 		double speedDifference = speed*Math.cos(angle);
 		
 		/* Calculate the final speeds, split the speed difference between the motors. */
-		double leftSpeed = velocity + speedDifference/2;
-		double rightSpeed = velocity - speedDifference/2;
+		double leftSpeedRaw = velocity + speedDifference/2;
+		double rightSpeedRaw = velocity - speedDifference/2;
+		
+		/* Clip signals to range [-1, 1] */
+		double leftSpeed = this.clipRange(leftSpeedRaw, -1, 1);
+		double rightSpeed = this.clipRange(rightSpeedRaw, -1, 1);
 		
 		/* Set motor speeds .*/
 		this.setSpeedLeft(leftSpeed);
@@ -52,19 +56,36 @@ public class MotorControl {
 	 */
 	private void setSpeedLeft(double speed) {
 		int motorSpeed = (int) Math.floor(127*speed + 0.5); /* Round to closest int. */
-		String preparedString = String.format("set m2speed %i\n", motorSpeed);
-		this.uartCom.sendString(preparedString);
+		String preparedString = String.format("set m2speed %d\n", motorSpeed);
+		//this.uartCom.sendString(preparedString);
 		Log.i(TAG, "Speed Left Command: " + preparedString);
 	}
+	
 	/**
 	 * Sets the speed of the right (M1) motor. Maps the speed [-1, 1] to [-127, 127].
 	 * @param speed Speed to set to the left motor, should be in the range [-1, 1].
 	 */
 	private void setSpeedRight(double speed) {
 		int motorSpeed = (int) Math.floor(127*speed + 0.5); /* Round to closest int. */
-		String preparedString = String.format("set m1speed %i\n", motorSpeed);
-		this.uartCom.sendString(preparedString);
+		String preparedString = String.format("set m1speed %d\n", motorSpeed);
+		//this.uartCom.sendString(preparedString);
 		Log.i(TAG, "Speed Right Command: " + preparedString);
+	}
+	
+	/**
+	 * Clips the given value to the range[min, max].
+	 * 
+	 * @param value	Input value
+	 * @param min	Minimum value
+	 * @param max	Maximum value
+	 * @return		Clipped value
+	 */
+	private double clipRange(double value, double min, double max) {
+		if(value > max) {
+			return Math.min(value, max);
+		} else {
+			return Math.max(value, min);
+		}
 	}
 	
 }
