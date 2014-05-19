@@ -62,6 +62,8 @@ public class MainActivity extends ActionBarActivity {
         	/* Create an OnToch listener with its associated onTouch method. */
         	circleView.setOnTouchListener(new OnTouchListener() {
         		
+        		private MotorControl control = new MotorControl();
+        		
         		@Override
         		public boolean onTouch(View v, MotionEvent event) {
         			
@@ -97,9 +99,11 @@ public class MainActivity extends ActionBarActivity {
             			double vectorLength = Math.sqrt(x*x + y*y);
             			radius = Math.min(vectorLength, 1);
             			
-            			/* Calculate vector angle and convert it to degrees. */
-            			angle = (180/Math.PI)*Math.atan2(y, x);
+            			/* Calculate vector angle in radians. */
+            			angle = Math.atan2(y, x);
         			}
+        			
+        			control.setVelocity(radius, angle);
         			
         			/* Print the values to the screen. */
         			TextView theRView = (TextView) getView().findViewById(R.id.rView);
