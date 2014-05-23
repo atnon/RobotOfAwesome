@@ -17,6 +17,8 @@
 package com.example.theinterface;
 
 import java.text.DecimalFormat;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
@@ -26,21 +28,14 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.Window;
-import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
-import android.view.inputmethod.EditorInfo;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
+import android.view.Window;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -82,6 +77,11 @@ public class Interfacet extends Activity {
     private BluetoothAdapter mBluetoothAdapter = null;
     // Member object for the chat services
     private TheBluetoothConnection mBluetoothConnection = null;
+    
+    private Pattern extractionPattern = Pattern.compile("angle\\{(.*?)\\};radius\\{(.*?)\\}");
+    
+    public Sendstring uartInterface;
+	public MotorControl control;
 
 
     @Override
@@ -108,6 +108,11 @@ public class Interfacet extends Activity {
             finish();
             return;
         }
+        
+        this.uartInterface = new Sendstring(this, null);
+        this.uartInterface.ResumeAccessory();
+        this.uartInterface.SetConfig(57600, (byte)8, (byte)1, (byte)0, (byte)0);
+        this.control = new MotorControl(uartInterface);
         
         /* Send the angle and radius when touching the circle */
         circleView = (ImageView) findViewById(R.id.inputArea);
@@ -154,6 +159,7 @@ public class Interfacet extends Activity {
     			}
     			
     	    	DecimalFormat style = new DecimalFormat("#.##");
+    	    	control.setVelocity(radius, angle);
     	    	
     	    	/* present it as output */
     			TextView theRView = (TextView) findViewById(R.id.tLength);
@@ -164,7 +170,7 @@ public class Interfacet extends Activity {
     	    	/* send it to the receiving device
     	    	 * use this format so that the setOutput method can translate it to separate values,
     	    	 * one for angle and  one for radius */
-    	    	sendMessage(style.format(radius) + "}" + style.format(angle) + "}");
+    	    	sendMessage("angle("+ style.format(angle) + ");radius(" + style.format(radius) + ")");
   
     			return true;  			
         	}
@@ -312,33 +318,30 @@ public class Interfacet extends Activity {
     
     /*Translates the output from a string to a radius and an angle */
     public void setOutput(String msg){ 
-    	/* set default values */
-    	String rad = "";
-    	String ang = "";
-    	boolean addToRad = true;
-    	char[] c = msg.toCharArray();
+    	/* Set default values. */
+    	double angle = 0;
+    	double radius = 0;
     	
-    	/*Go through every char and add the integers for the angle to the angle
-    	 * and the same for the radius */
-    	for (int i = 0;i<c.length;i++){
-    		if((c[i] != '}')&&(addToRad)){
-    			rad += c[i];
-    		}else if(c[i] == '}'){
-    			if (!addToRad){
-    				break;
-    			}
-    			addToRad = false;
-    		}
-    		else {
-    			ang+=c[i];
-    		}
+    	/* Run a regex search on the received string. */
+    	Matcher m = extractionPattern.matcher(msg);
+    	
+    	if(m.find()) {
+    		/* If the string is valid and there is a match, 
+    		 * parse the matches into doubles. */
+    		angle = Double.parseDouble(m.group(1));
+    		radius = Double.parseDouble(m.group(2));
     	}
     	
-    	/*Present it */ 
-    	TextView tv = (TextView) findViewById(R.id.vRadius);
-        tv.setText(rad);
-        TextView tv2 = (TextView) findViewById(R.id.vAngle);
-        tv2.setText(ang);
+    	/* Set the motor speeds accordingly. */
+    	control.setVelocity(radius, angle);
+    	
+    	/* Present the data to the UI. */
+    	DecimalFormat style = new DecimalFormat("#.##");
+    	
+		TextView theRView = (TextView) findViewById(R.id.tLength);
+    	TextView theAngView = (TextView) findViewById(R.id.tAngle);
+		theRView.setText(style.format(radius));
+    	theAngView.setText(style.format(angle));
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

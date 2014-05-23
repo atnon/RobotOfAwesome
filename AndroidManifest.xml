@@ -5,8 +5,7 @@
     android:versionName="1.0" >
 
     <uses-sdk
-        android:minSdkVersion="12"
-        android:targetSdkVersion="18" />
+        android:minSdkVersion="6" />
     <uses-feature android:name="android.hardware.usb.accessory"/>
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
