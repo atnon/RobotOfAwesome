@@ -78,7 +78,7 @@ public class Interfacet extends Activity {
     // Member object for the chat services
     private TheBluetoothConnection mBluetoothConnection = null;
     
-    private Pattern extractionPattern = Pattern.compile("angle\\{(.*?)\\};radius\\{(.*?)\\}");
+    private Pattern extractionPattern = Pattern.compile("angle\\{(.*?)\\};radius\\{(.*?)\\};");
     
     public Sendstring uartInterface;
 	public MotorControl control;
@@ -159,7 +159,7 @@ public class Interfacet extends Activity {
     			}
     			
     	    	DecimalFormat style = new DecimalFormat("#.##");
-    	    	control.setVelocity(radius, angle);
+    	    	this.control.setVelocity(radius, angle);
     	    	
     	    	/* present it as output */
     			TextView theRView = (TextView) findViewById(R.id.tLength);
@@ -170,7 +170,7 @@ public class Interfacet extends Activity {
     	    	/* send it to the receiving device
     	    	 * use this format so that the setOutput method can translate it to separate values,
     	    	 * one for angle and  one for radius */
-    	    	sendMessage("angle("+ style.format(angle) + ");radius(" + style.format(radius) + ")");
+    	    	sendMessage("angle{"+ style.format(angle) + "};radius{" + style.format(radius) + "};");
   
     			return true;  			
         	}
@@ -316,32 +316,45 @@ public class Interfacet extends Activity {
         }
     };
     
-    /*Translates the output from a string to a radius and an angle */
-    public void setOutput(String msg){ 
-    	/* Set default values. */
-    	double angle = 0;
-    	double radius = 0;
-    	
+    public static class Vector {
+    	public double angle;
+    	public double radius;
+    }
+    
+    public Vector parseString(String msg) {
+    	/* extractionPattern = Pattern.compile("angle\\{(.*?)\\};radius\\{(.*?)\\}"); */
     	/* Run a regex search on the received string. */
     	Matcher m = extractionPattern.matcher(msg);
     	
     	if(m.find()) {
     		/* If the string is valid and there is a match, 
     		 * parse the matches into doubles. */
-    		angle = Double.parseDouble(m.group(1));
-    		radius = Double.parseDouble(m.group(2));
+    		Vector result = new Vector();
+    		result.angle = Double.parseDouble(m.group(1));
+    		result.radius = Double.parseDouble(m.group(2));
+    		return result;
+    	} else {
+    		return null;
     	}
     	
-    	/* Set the motor speeds accordingly. */
-    	control.setVelocity(radius, angle);
+    }
+    
+    /*Translates the output from a string to a radius and an angle */
+    public void setOutput(String msg){ 
     	
-    	/* Present the data to the UI. */
-    	DecimalFormat style = new DecimalFormat("#.##");
-    	
-		TextView theRView = (TextView) findViewById(R.id.tLength);
-    	TextView theAngView = (TextView) findViewById(R.id.tAngle);
-		theRView.setText(style.format(radius));
-    	theAngView.setText(style.format(angle));
+    	Vector motorData = parseString(msg);
+    	if(motorData != null) {
+	    	/* Set the motor speeds accordingly. */
+	    	this.control.setVelocity(motorData.radius, motorData.angle);
+	    	
+	    	/* Present the data to the UI. */
+	    	DecimalFormat style = new DecimalFormat("#.##");
+	    	
+			TextView theRView = (TextView) findViewById(R.id.tLength);
+	    	TextView theAngView = (TextView) findViewById(R.id.tAngle);
+			theRView.setText(style.format(motorData.radius));
+	    	theAngView.setText(style.format(motorData.angle));
+    	}
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
