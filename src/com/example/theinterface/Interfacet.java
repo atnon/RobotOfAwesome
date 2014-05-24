@@ -16,9 +16,13 @@
 
 package com.example.theinterface;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.text.DecimalFormat;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.apache.http.protocol.HTTP;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
@@ -330,8 +334,23 @@ public class Interfacet extends Activity {
     		/* If the string is valid and there is a match, 
     		 * parse the matches into doubles. */
     		Vector result = new Vector();
-    		result.angle = Double.parseDouble(m.group(1));
-    		result.radius = Double.parseDouble(m.group(2));
+    		String inputAngle = m.group(1);
+    		String inputRadius = m.group(2);
+    		
+    		/*change , to . */
+    		inputAngle = inputAngle.replace(',','.');
+    		inputRadius = inputRadius.replace(',','.');
+    		
+    		/* translate inputAngle it to HTTP.ISO_8859_1 since the msg does not use the sign '-' */
+    		try {
+    			inputAngle = new String(URLEncoder.encode(inputAngle, HTTP.ISO_8859_1));
+			} catch (UnsupportedEncodingException e1) {}
+    		/* change %3F to - */
+    		inputAngle = inputAngle.replace("%3F", "-");
+    		
+    		try{result.angle = Double.parseDouble(inputAngle);}catch(NumberFormatException e){};
+    		try{result.radius = Double.parseDouble(inputRadius);}catch(NumberFormatException e){};
+    		
     		return result;
     	} else {
     		return null;
