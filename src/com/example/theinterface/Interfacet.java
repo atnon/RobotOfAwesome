@@ -16,14 +16,10 @@
 
 package com.example.theinterface;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.apache.http.protocol.HTTP;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
@@ -32,7 +28,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -50,37 +45,32 @@ import android.widget.Toast;
 public class Interfacet extends Activity {
 	ImageView circleView;
 	
-	
-    // Debugging
-    private static final String TAG = "BluetoothCon";
-    private static final boolean D = true;
-
-    // Message types sent from the BluetoothChatService Handler
+    /* Message types sent from the TheBluetoothConnection Handler */
     public static final int MESSAGE_STATE_CHANGE = 1;
     public static final int MESSAGE_READ = 2;
     public static final int MESSAGE_WRITE = 3;
     public static final int MESSAGE_DEVICE_NAME = 4;
     public static final int MESSAGE_TOAST = 5;
 
-    // Key names received from the BluetoothChatService Handler
+    /* Key names received from the TheBluetoothConnection Handler */
     public static final String DEVICE_NAME = "device_name";
     public static final String TOAST = "toast";
 
-    // Intent request codes
+    /* Intent request codes */
     private static final int REQUEST_CONNECT_DEVICE = 1;
     private static final int REQUEST_ENABLE_BT = 2;
 
-    // Layout Views
+    /* Layout Views */
     private TextView mTitle;
 
-    // Name of the connected device
+    /* Name of the connected device */
     private String mConnectedDeviceName = null;
      
-    // String buffer for outgoing messages
+    /* String buffer for outgoing messages */
     private StringBuffer mOutStringBuffer;
-    // Local Bluetooth adapter
+    /* Local Bluetooth adapter */
     private BluetoothAdapter mBluetoothAdapter = null;
-    // Member object for the chat services
+    /* Member object for the chat services */
     private TheBluetoothConnection mBluetoothConnection = null;
     
     private Pattern extractionPattern = Pattern.compile("angle\\{(.*?)\\};radius\\{(.*?)\\};");
@@ -92,14 +82,13 @@ public class Interfacet extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(D) Log.e(TAG, "+++ ON CREATE +++");
        
-        // Set up the window layout
+        /* Set up the window layout */
         requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
         setContentView(R.layout.main);
         getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.custom_title);
 
-        // Set up the custom title
+        /* Set up the custom title */
         mTitle = (TextView) findViewById(R.id.title_left_text);
         mTitle.setText(R.string.app_name);
         mTitle = (TextView) findViewById(R.id.title_right_text);
@@ -151,9 +140,8 @@ public class Interfacet extends Activity {
         			
         			/* Calculate the resulting vector and normalize it in order to compensate for 
         			 * different display sizes. */
-        			x = (touchX - (imageWidth/2))/(circleView.getWidth()/2);
+        			x = (touchX - (imageWidth/2))/(imageWidth/2);
         			y = -((touchY - (imageHeight/2))/(imageHeight/2));
-        			
         			
         			/* Calculate vector length, max is 1. */
         			double vectorLength = Math.sqrt(x*x + y*y);
@@ -163,34 +151,48 @@ public class Interfacet extends Activity {
         			angle = Math.atan2(y, x);
     			}
     			
-    			DecimalFormatSymbols df = new DecimalFormatSymbols();
-    			df.setDecimalSeparator('.');
-    			df.setMinusSign('-');
-    	    	DecimalFormat style = new DecimalFormat("#.##",df);
+    			/* format the doubles */
+    			String strRadius =  doubleFormatter(radius);
+    			String strAngle = doubleFormatter(angle);
+    			
+    			// TODO ha kvar?
     	    	control.setVelocity(radius, angle);
     	    	
     	    	/* present it as output */
     			TextView theRView = (TextView) findViewById(R.id.tLength);
     	    	TextView theAngView = (TextView) findViewById(R.id.tAngle);
-    			theRView.setText(style.format(radius));
-    	    	theAngView.setText(style.format(angle));
+    			theRView.setText(strRadius);
+    	    	theAngView.setText(strAngle);
     			
     	    	/* send it to the receiving device
     	    	 * use this format so that the setOutput method can translate it to separate values,
     	    	 * one for angle and  one for radius */
-    	    	sendMessage("angle{"+ style.format(angle) + "};radius{" + style.format(radius) + "};");
+    	    	sendMessage("angle{"+ strAngle + "};radius{" + strRadius + "};");
   
     			return true;  			
         	}
 		});
-
-        
+    }
+    
+    /**
+     * removes extra decimals. Only two are needed. 
+	 * Also, use dots as decimal separator instead of commas. 
+	 * Finally, use - as minus sign instead of the wider type .
+     * @param d  A double to format.
+     * @return a formatted string.
+     */
+    private String doubleFormatter (Double d){
+		DecimalFormatSymbols df = new DecimalFormatSymbols();
+		df.setDecimalSeparator('.');
+		df.setMinusSign('-');
+    	DecimalFormat style = new DecimalFormat("#.##",df);
+    	String output = style.format(d);
+    	return output;
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        if(D) Log.e(TAG, "++ ON START ++");
 
         /* If BT is not on, request that it be enabled.
          * setupChat() will then be called during onActivityResult */
@@ -206,7 +208,6 @@ public class Interfacet extends Activity {
     @Override
     public synchronized void onResume() {
         super.onResume();
-        if(D) Log.e(TAG, "+ ON RESUME +");
 
         /* Performing this check in onResume() covers the case in which BT was
          * not enabled during onStart(), so we were paused to enable it...
@@ -221,7 +222,6 @@ public class Interfacet extends Activity {
     }
 
     private void setupChat() {
-        Log.d(TAG, "setupChat()");
 
         /* Initialize the BluetoothChatService to perform bluetooth connections */
         mBluetoothConnection = new TheBluetoothConnection(this, mHandler);
@@ -233,13 +233,12 @@ public class Interfacet extends Activity {
     @Override
     public synchronized void onPause() {
         super.onPause();
-        if(D) Log.e(TAG, "- ON PAUSE -");
+        
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        if(D) Log.e(TAG, "-- ON STOP --");
     }
 
     @Override
@@ -247,11 +246,9 @@ public class Interfacet extends Activity {
         super.onDestroy();
         /* Stop the Bluetooth chat services */
         if (mBluetoothConnection != null) mBluetoothConnection.stop();
-        if(D) Log.e(TAG, "--- ON DESTROY ---");
     }
 
     private void ensureDiscoverable() {
-        if(D) Log.d(TAG, "ensure discoverable");
         if (mBluetoothAdapter.getScanMode() !=
             BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
             Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
@@ -277,7 +274,7 @@ public class Interfacet extends Activity {
             byte[] send = message.getBytes();
             mBluetoothConnection.write(send);
             
-            /* Reset out string buffer to zero and clear the edit text field */
+            /* Reset out string buffer to zero  */
             mOutStringBuffer.setLength(0);
             
         }
@@ -289,7 +286,6 @@ public class Interfacet extends Activity {
         public void handleMessage(Message msg) {
             switch (msg.what) {
             case MESSAGE_STATE_CHANGE:
-                if(D) Log.i(TAG, "MESSAGE_STATE_CHANGE: " + msg.arg1);
                 switch (msg.arg1) {
                 case TheBluetoothConnection.STATE_CONNECTED:
                     mTitle.setText(R.string.title_connected_to);
@@ -355,21 +351,20 @@ public class Interfacet extends Activity {
     	Vector motorData = parseString(msg);
     	if(motorData != null) {
 	    	/* Set the motor speeds accordingly. */
-    		Log.d(TAG, String.valueOf(motorData.angle));
 	    	control.setVelocity(motorData.radius, motorData.angle);
 	    	
 	    	/* Present the data to the UI. */
-	    	DecimalFormat style = new DecimalFormat("#.##");
+	    	String strRadius = doubleFormatter(motorData.radius);
+	    	String strAngle =  doubleFormatter(motorData.angle);
 	    	
 			TextView theRView = (TextView) findViewById(R.id.tLength);
 	    	TextView theAngView = (TextView) findViewById(R.id.tAngle);
-			theRView.setText(style.format(motorData.radius));
-	    	theAngView.setText(style.format(motorData.angle));
+			theRView.setText(strRadius);
+	    	theAngView.setText(strAngle);
     	}
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(D) Log.d(TAG, "onActivityResult " + resultCode);
         switch (requestCode) {
         case REQUEST_CONNECT_DEVICE:
             /* When DeviceListActivity returns with a device to connect */
@@ -390,7 +385,6 @@ public class Interfacet extends Activity {
                 setupChat();
             } else {
                 /* User did not enable Bluetooth or an error occured */
-                Log.d(TAG, "BT not enabled");
                 Toast.makeText(this, R.string.bt_not_enabled_leaving, Toast.LENGTH_SHORT).show();
                 finish();
             }
