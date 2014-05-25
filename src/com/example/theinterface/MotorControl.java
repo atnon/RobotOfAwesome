@@ -45,33 +45,31 @@ public class MotorControl {
 		double leftSpeed = this.clipRange(leftSpeedRaw, -1, 1);
 		double rightSpeed = this.clipRange(rightSpeedRaw, -1, 1);
 		
-		/* Set motor speeds .*/
-		this.setSpeedLeft(leftSpeed);
-		this.setSpeedRight(rightSpeed);
+		/* Generate control strings to send to the motor controller. */
+		byte[] leftSpeedString = generateControlString(2, leftSpeed);
+		byte[] rightSpeedString = generateControlString(1, rightSpeed);
+		
+		/* If the controller is connected, send the control strings.*/
+		if(this.uartCom.accessory_attached) {
+			this.uartCom.SendData(leftSpeedString.length, leftSpeedString);
+			this.uartCom.SendData(rightSpeedString.length, rightSpeedString);
+		}
 	}
 	
 	/**
-	 * Sets the speed of the left (M2) motor. Maps the speed [-1, 1] to [-127, 127].
-	 * @param speed Speed to set to the left motor, should be in the range [-1, 1].
+	 * Takes the motor number and the speed to set, maps the speed [-1, 1] to [-127, 127]
+	 * and generates the control string neccessary for communication
+	 * with the motor controller.
+	 * 
+	 * @param motorNum	Number of the motor on the robot, 1 or 2.
+	 * @param speed		Speed to set to the assigned motor.
+	 * @return			Byte array containing the control string.
 	 */
-	private void setSpeedLeft(double speed) {
+	public byte[] generateControlString(int motorNum, double speed) {
 		int motorSpeed = (int) Math.floor(127*speed + 0.5); /* Round to closest int. */
-		String preparedString = String.format("set m2speed %d\n", motorSpeed);
+		String preparedString = String.format("set m%dspeed %d\n", motorNum, motorSpeed);
 		byte[] byteString = preparedString.getBytes();
-		this.uartCom.SendData(byteString.length, byteString);
-		Log.i(TAG, "Speed Left Command: " + preparedString);
-	}
-	
-	/**
-	 * Sets the speed of the right (M1) motor. Maps the speed [-1, 1] to [-127, 127].
-	 * @param speed Speed to set to the left motor, should be in the range [-1, 1].
-	 */
-	private void setSpeedRight(double speed) {
-		int motorSpeed = (int) Math.floor(127*speed + 0.5); /* Round to closest int. */
-		String preparedString = String.format("set m1speed %d\n", motorSpeed);
-		byte[] byteString = preparedString.getBytes();
-		this.uartCom.SendData((int)byteString.length, byteString);
-		Log.i(TAG, "Speed Right Command: " + preparedString);
+		return byteString;
 	}
 	
 	/**
@@ -82,7 +80,7 @@ public class MotorControl {
 	 * @param max	Maximum value
 	 * @return		Clipped value
 	 */
-	private double clipRange(double value, double min, double max) {
+	public double clipRange(double value, double min, double max) {
 		if(value > max) {
 			return Math.min(value, max);
 		} else {
