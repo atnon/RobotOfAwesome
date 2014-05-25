@@ -19,6 +19,7 @@ package com.example.theinterface;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -162,7 +163,10 @@ public class Interfacet extends Activity {
         			angle = Math.atan2(y, x);
     			}
     			
-    	    	DecimalFormat style = new DecimalFormat("#.##");
+    			DecimalFormatSymbols df = new DecimalFormatSymbols();
+    			df.setDecimalSeparator('.');
+    			df.setMinusSign('-');
+    	    	DecimalFormat style = new DecimalFormat("#.##",df);
     	    	control.setVelocity(radius, angle);
     	    	
     	    	/* present it as output */
@@ -334,22 +338,9 @@ public class Interfacet extends Activity {
     		/* If the string is valid and there is a match, 
     		 * parse the matches into doubles. */
     		Vector result = new Vector();
-    		String inputAngle = m.group(1);
-    		String inputRadius = m.group(2);
     		
-    		/*change , to . */
-    		inputAngle = inputAngle.replace(',','.');
-    		inputRadius = inputRadius.replace(',','.');
-    		
-    		/* translate inputAngle it to HTTP.ISO_8859_1 since the msg does not use the sign '-' */
-    		try {
-    			inputAngle = new String(URLEncoder.encode(inputAngle, HTTP.ISO_8859_1));
-			} catch (UnsupportedEncodingException e1) {}
-    		/* change %3F to - */
-    		inputAngle = inputAngle.replace("%3F", "-");
-    		
-    		try{result.angle = Double.parseDouble(inputAngle);}catch(NumberFormatException e){};
-    		try{result.radius = Double.parseDouble(inputRadius);}catch(NumberFormatException e){};
+    		try{result.angle = Double.parseDouble(m.group(1));}catch(NumberFormatException e){};
+    		try{result.radius = Double.parseDouble(m.group(2));}catch(NumberFormatException e){};
     		
     		return result;
     	} else {
@@ -364,6 +355,7 @@ public class Interfacet extends Activity {
     	Vector motorData = parseString(msg);
     	if(motorData != null) {
 	    	/* Set the motor speeds accordingly. */
+    		Log.d(TAG, String.valueOf(motorData.angle));
 	    	control.setVelocity(motorData.radius, motorData.angle);
 	    	
 	    	/* Present the data to the UI. */
