@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.theinterface;
+package com.se.chalmers.roa;
 
 import java.io.IOException;
 import java.io.InputStream;

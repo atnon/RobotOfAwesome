@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.theinterface;
+package com.se.chalmers.roa;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -38,6 +38,7 @@ import android.view.Window;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.se.chalmers.roa.R;
 
 /**
  * This is the main Activity that displays the current chat session.

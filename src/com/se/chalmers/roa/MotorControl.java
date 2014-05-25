@@ -4,7 +4,7 @@
  * 
  * @author Anton Landberg (git@atnon.se)
  */
-package com.example.theinterface;
+package com.se.chalmers.roa;
 
 import android.util.Log;
 

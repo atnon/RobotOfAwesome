@@ -1,4 +1,4 @@
-package com.example.theinterface;
+package com.se.chalmers.roa;
 
 /**
  * Provides the neccessary interfaces for communication classes.

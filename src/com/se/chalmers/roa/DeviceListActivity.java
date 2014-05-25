@@ -14,10 +14,9 @@
  * limitations under the License.
  */
 
-package com.example.theinterface;
+package com.se.chalmers.roa;
 
 import java.util.Set;
-
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -36,6 +35,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
+import com.se.chalmers.roa.R;
 
 /**
  * This Activity appears as a dialog. It lists any paired devices and

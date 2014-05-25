@@ -1,4 +1,4 @@
-package com.example.theinterface;
+package com.se.chalmers.roa;
 
 import static org.junit.Assert.*;
 
