@@ -28,6 +28,8 @@ public class MotorControlTest {
 	@Test
 	public void testClipRange() {
 		MotorControl dut = new MotorControl(null);
+		
+		/* Asser that the range clipping works as it should. */
 		assertEquals(dut.clipRange(3.13, -1, 1), 1, 0);
 		assertEquals(dut.clipRange(-3.13, -1, 1), -1, 0);
 		assertEquals(dut.clipRange(0, -1, 1), 0, 0);
