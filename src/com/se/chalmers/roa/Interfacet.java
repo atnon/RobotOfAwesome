@@ -20,7 +20,6 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -34,7 +33,6 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
-import android.view.Window;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -156,12 +154,11 @@ public class Interfacet extends Activity {
     			String strRadius =  doubleFormatter(radius);
     			String strAngle = doubleFormatter(angle);
     			
-    			// TODO ha kvar?
     	    	control.setVelocity(radius, angle);
     	    	
     	    	/* present it as output */
-    			TextView theRView = (TextView) findViewById(R.id.tLength);
-    	    	TextView theAngView = (TextView) findViewById(R.id.tAngle);
+    			TextView theRView = (TextView) findViewById(R.id.tvTheLength);
+    	    	TextView theAngView = (TextView) findViewById(R.id.tvTheAngle);
     			theRView.setText(strRadius);
     	    	theAngView.setText(strAngle);
     			
@@ -358,8 +355,8 @@ public class Interfacet extends Activity {
 	    	String strRadius = doubleFormatter(motorData.radius);
 	    	String strAngle =  doubleFormatter(motorData.angle);
 	    	
-			TextView theRView = (TextView) findViewById(R.id.tLength);
-	    	TextView theAngView = (TextView) findViewById(R.id.tAngle);
+			TextView theRView = (TextView) findViewById(R.id.tvTheLength);
+	    	TextView theAngView = (TextView) findViewById(R.id.tvTheAngle);
 			theRView.setText(strRadius);
 	    	theAngView.setText(strAngle);
     	}

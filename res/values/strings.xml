@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
+	
+    <!-- mainView -->
     <string name="app_name">Robot of Awesome</string>
     <string name="action_settings">Settings</string>
-   <string name ="TextView1Text">The x-coordinate:</string>
-    <string name ="TextView2Text">The y-coordinate:</string>
-    <string name ="TextView3Text">The length of the vector:</string>
-    <string name ="TextView4Text">The angle of the vector:</string>
+   	<string name ="TextConnStatus">Connected to: &#160;</string>
+   	<string name ="TextRecivingStatus">This is the recieving device</string>
+   	<string name ="TextSendingStatus">This is the sending device</string>
+   	<string name ="TextLengthOfVector">The Length: &#160;</string>
+   	<string name ="TextAngleOfVector">The Angle: &#160;</string>
+    
     
     <!--  BluetoothChat -->
     <string name="send">Send</string>
