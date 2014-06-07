@@ -60,7 +60,7 @@ public class Interfacet extends Activity {
     private static final int REQUEST_ENABLE_BT = 2;
 
     /* Layout Views */
-    //private TextView mTitle;
+    private TextView mTheConnStatus;
 
     /* Name of the connected device */
     private String mConnectedDeviceName = null;
@@ -83,14 +83,10 @@ public class Interfacet extends Activity {
         super.onCreate(savedInstanceState);
        
         /* Set up the window layout */
-        //requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
         setContentView(R.layout.main);
-        //getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.custom_title);
 
-        /* Set up the custom title */
-        //mTitle = (TextView) findViewById(R.id.title_left_text);
-        //mTitle.setText(R.string.app_name);
-        //mTitle = (TextView) findViewById(R.id.title_right_text);
+        /* Set up the text view containing bluetooth connection information. */
+        mTheConnStatus = (TextView) findViewById(R.id.tvTheConnStatus);
         
         /* Get local Bluetooth adapter */
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -286,15 +282,15 @@ public class Interfacet extends Activity {
             case MESSAGE_STATE_CHANGE:
                 switch (msg.arg1) {
                 case TheBluetoothConnection.STATE_CONNECTED:
-                    //mTitle.setText(R.string.title_connected_to);
-                    //mTitle.append(mConnectedDeviceName);
+                    mTheConnStatus.setText(R.string.title_connected_to);
+                    mTheConnStatus.append(mConnectedDeviceName);
                     break;
                 case TheBluetoothConnection.STATE_CONNECTING:
-                    //mTitle.setText(R.string.title_connecting);
+                	mTheConnStatus.setText(R.string.title_connecting);
                     break;
                 case TheBluetoothConnection.STATE_LISTEN:
                 case TheBluetoothConnection.STATE_NONE:
-                    //mTitle.setText(R.string.title_not_connected);
+                	mTheConnStatus.setText(R.string.title_not_connected);
                     break;
                 }
                 break;
