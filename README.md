@@ -7,6 +7,14 @@ The reader will notice that we actually did not only do software, but also hardw
 
 A lot of documentation such as user stories can be found in the [project wiki](https://github.com/atnon/RobotOfAwesome/wiki).
 
+
+The result can be seen below, click to watch on youtube.
+
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=JptrdEBxx-E" target="_blank"><img src="http://img.youtube.com/vi/JptrdEBxx-E/0.jpg" 
+alt="Awesome Video" width="240" height="180" border="10" /></a>
+
+
+
 ## Dependencies
 * IDE supporting Android, we recommend the [ADT bundle](http://developer.android.com/sdk/index.html) provided by Google.
 * Android SDK v12 or higher (this version introduces support for Android Open Accessories).
