@@ -6,12 +6,9 @@
  */
 package com.se.chalmers.roa;
 
-import android.util.Log;
-
 public class MotorControl {
 	
 	private Sendstring uartCom;
-	private static final String TAG = "MotorControl";
 	
 	public MotorControl(Sendstring uartCom) {
 		this.uartCom = uartCom;

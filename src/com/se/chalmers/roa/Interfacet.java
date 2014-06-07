@@ -20,7 +20,6 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -34,7 +33,6 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
-import android.view.Window;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -62,7 +60,7 @@ public class Interfacet extends Activity {
     private static final int REQUEST_ENABLE_BT = 2;
 
     /* Layout Views */
-    private TextView mTitle;
+    private TextView mTheConnStatus;
 
     /* Name of the connected device */
     private String mConnectedDeviceName = null;
@@ -85,14 +83,10 @@ public class Interfacet extends Activity {
         super.onCreate(savedInstanceState);
        
         /* Set up the window layout */
-        requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
         setContentView(R.layout.main);
-        getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.custom_title);
 
-        /* Set up the custom title */
-        mTitle = (TextView) findViewById(R.id.title_left_text);
-        mTitle.setText(R.string.app_name);
-        mTitle = (TextView) findViewById(R.id.title_right_text);
+        /* Set up the text view containing bluetooth connection information. */
+        mTheConnStatus = (TextView) findViewById(R.id.tvTheConnStatus);
         
         /* Get local Bluetooth adapter */
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -156,12 +150,11 @@ public class Interfacet extends Activity {
     			String strRadius =  doubleFormatter(radius);
     			String strAngle = doubleFormatter(angle);
     			
-    			// TODO ha kvar?
     	    	control.setVelocity(radius, angle);
     	    	
     	    	/* present it as output */
-    			TextView theRView = (TextView) findViewById(R.id.tLength);
-    	    	TextView theAngView = (TextView) findViewById(R.id.tAngle);
+    			TextView theRView = (TextView) findViewById(R.id.tvTheLength);
+    	    	TextView theAngView = (TextView) findViewById(R.id.tvTheAngle);
     			theRView.setText(strRadius);
     	    	theAngView.setText(strAngle);
     			
@@ -265,7 +258,7 @@ public class Interfacet extends Activity {
     private void sendMessage(String message) {
         /* Check that we're actually connected before trying anything */
         if (mBluetoothConnection.getState() != TheBluetoothConnection.STATE_CONNECTED) {
-            Toast.makeText(this, R.string.not_connected, Toast.LENGTH_SHORT).show();
+            /* Toast.makeText(this, R.string.not_connected, Toast.LENGTH_SHORT).show();*/
             return;
         }
 
@@ -289,15 +282,15 @@ public class Interfacet extends Activity {
             case MESSAGE_STATE_CHANGE:
                 switch (msg.arg1) {
                 case TheBluetoothConnection.STATE_CONNECTED:
-                    mTitle.setText(R.string.title_connected_to);
-                    mTitle.append(mConnectedDeviceName);
+                    mTheConnStatus.setText(R.string.title_connected_to);
+                    mTheConnStatus.append(mConnectedDeviceName);
                     break;
                 case TheBluetoothConnection.STATE_CONNECTING:
-                    mTitle.setText(R.string.title_connecting);
+                	mTheConnStatus.setText(R.string.title_connecting);
                     break;
                 case TheBluetoothConnection.STATE_LISTEN:
                 case TheBluetoothConnection.STATE_NONE:
-                    mTitle.setText(R.string.title_not_connected);
+                	mTheConnStatus.setText(R.string.title_not_connected);
                     break;
                 }
                 break;
@@ -358,8 +351,8 @@ public class Interfacet extends Activity {
 	    	String strRadius = doubleFormatter(motorData.radius);
 	    	String strAngle =  doubleFormatter(motorData.angle);
 	    	
-			TextView theRView = (TextView) findViewById(R.id.tLength);
-	    	TextView theAngView = (TextView) findViewById(R.id.tAngle);
+			TextView theRView = (TextView) findViewById(R.id.tvTheLength);
+	    	TextView theAngView = (TextView) findViewById(R.id.tvTheAngle);
 			theRView.setText(strRadius);
 	    	theAngView.setText(strAngle);
     	}
